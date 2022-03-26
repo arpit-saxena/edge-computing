@@ -1,0 +1,30 @@
+version: '3.4'
+
+services:
+  client:
+    build: client/
+    networks:
+      - client-upf
+    depends_on:
+      - cloud
+      - mech
+      - upf
+  cloud:
+    build: cloud/
+    networks:
+      - upf-cloud
+  mech:
+    build: mech/
+    networks:
+      - upf-mech
+  upf:
+    build: upf/
+    networks:
+      - client-upf
+      - upf-cloud
+      - upf-mech
+
+networks:
+  client-upf:
+  upf-cloud:
+  upf-mech:
