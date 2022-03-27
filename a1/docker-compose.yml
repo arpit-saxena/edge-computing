@@ -12,7 +12,6 @@ services:
     environment:
       - cloud_ip=172.240.12.2
       - upf_ip=172.240.11.3
-      - PYTHONUNBUFFERED=1
     cap_add:
       - NET_ADMIN
   cloud:
@@ -22,9 +21,7 @@ services:
       upf-cloud:
         ipv4_address: 172.240.12.2
     environment:
-      - client_ip=172.240.11.2
       - upf_ip=172.240.12.3
-      - PYTHONUNBUFFERED=1
     cap_add:
       - NET_ADMIN
   mech:
@@ -35,7 +32,6 @@ services:
         ipv4_address: 172.240.13.2
     environment:
       - upf_ip=172.240.13.3
-      - PYTHONUNBUFFERED=1
     cap_add:
       - NET_ADMIN
   upf:
@@ -51,10 +47,6 @@ services:
     depends_on:
       - mech
       - cloud
-    environment:
-      - mech_ip=172.240.13.2
-      - cloud_ip=172.240.12.2
-      - PYTHONUNBUFFERED=1
     env_file:
       - .env
     cap_add:
