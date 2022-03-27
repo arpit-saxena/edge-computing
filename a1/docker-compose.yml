@@ -3,28 +3,73 @@ version: '3.4'
 services:
   client:
     build: client/
+    hostname: Client
     networks:
-      - client-upf
+      client-upf:
+        ipv4_address: 172.240.11.2
     depends_on:
-      - cloud
-      - mech
       - upf
+    environment:
+      - cloud_ip=172.240.12.2
+      - upf_ip=172.240.11.3
+      - PYTHONUNBUFFERED=1
+    cap_add:
+      - NET_ADMIN
   cloud:
     build: cloud/
+    hostname: Cloud
     networks:
-      - upf-cloud
+      upf-cloud:
+        ipv4_address: 172.240.12.2
+    environment:
+      - client_ip=172.240.11.2
+      - upf_ip=172.240.12.3
+      - PYTHONUNBUFFERED=1
+    cap_add:
+      - NET_ADMIN
   mech:
     build: mech/
+    hostname: MECH
     networks:
-      - upf-mech
+      upf-mech:
+        ipv4_address: 172.240.13.2
+    environment:
+      - upf_ip=172.240.13.3
+      - PYTHONUNBUFFERED=1
+    cap_add:
+      - NET_ADMIN
   upf:
     build: upf/
+    hostname: UPF
     networks:
-      - client-upf
-      - upf-cloud
-      - upf-mech
+      client-upf:
+        ipv4_address: 172.240.11.3
+      upf-cloud:
+        ipv4_address: 172.240.12.3
+      upf-mech:
+        ipv4_address: 172.240.13.3
+    depends_on:
+      - mech
+      - cloud
+    environment:
+      - mech_ip=172.240.13.2
+      - cloud_ip=172.240.12.2
+      - PYTHONUNBUFFERED=1
+    env_file:
+      - .env
+    cap_add:
+      - NET_ADMIN
 
 networks:
   client-upf:
+    ipam:
+      config:
+        - subnet: 172.240.11.0/24
   upf-cloud:
+    ipam:
+      config:
+        - subnet: 172.240.12.0/24
   upf-mech:
+    ipam:
+      config:
+        - subnet: 172.240.13.0/24
